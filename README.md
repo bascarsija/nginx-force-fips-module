@@ -1,18 +1,14 @@
-# FIPS status check module for NGINX
+# Attribution
+
+This module was derived from [ogarrett/nginx-fips-check-module](https://github.com/ogarrett/nginx-fips-check-module).
+
+# Forced FIPS mode module for NGINX
 
 ## Introduction
 
 This module applies to NGINX builds that use OpenSSL for SSL/TLS crypto.  It runs after 
-NGINX startup and queries the OpenSSL library, reporting if the library is in FIPS mode or not.
-
-```sh
-sudo tail /var/log/nginx/error.log
-2020/04/03 07:45:54 [notice] 11250#11250: using the "epoll" event method
-2020/04/03 07:45:54 [notice] 11250#11250: OpenSSL FIPS Mode is enabled
-2020/04/03 07:45:54 [notice] 11250#11250: nginx/1.17.6 (nginx-plus-r20)
-2020/04/03 07:45:54 [notice] 11250#11250: built by gcc 4.8.5 20150623 (Red Hat 4.8.5-36) (GCC)
-2020/04/03 07:45:54 [notice] 11250#11250: OS: Linux 3.10.0-1062.el7.x86_64
-```
+NGINX startup and queries the OpenSSL library, reporting if the library is in FIPS mode or not,
+and either enables it if possible, or aborts NGINX otherwise.
 
 For more information on using NGINX in FIPS mode, see the [NGINX Plus FIPS documentation], which applies to both NGINX open source builds and NGINX Plus. To determine which TLS ciphers NGINX offers, the [nmap ssl-enum-ciphers] script is useful.
 
@@ -42,7 +38,7 @@ $ tar -xzvf nginx-1.17.6.tar.gz
 $ ls -1F
 nginx-1.17.6/
 nginx-1.17.6.tar.gz
-nginx-fips-check-module/
+nginx-force-fips-module/
 ```
 
 **Build the module**
@@ -53,7 +49,7 @@ The following `configure` command should build modules correctly for NGINX Plus 
 
 ```sh
 $ cd nginx-1.17.6
-$ ./configure --with-compat --with-http_ssl_module --add-dynamic-module=../nginx-fips-check-module
+$ ./configure --with-compat --with-http_ssl_module --add-dynamic-module=../nginx-force-fips-module
 $ make modules
 ```
 
@@ -80,7 +76,8 @@ $ sudo nginx -s stop ; sudo nginx ; sudo tail /var/log/nginx/error.log
 2020/04/03 08:21:55 [notice] 11251#11251: worker process 11253 exited with code 0
 2020/04/03 08:21:55 [notice] 11251#11251: exit
 2020/04/03 08:21:55 [notice] 13723#13723: using the "epoll" event method
-2020/04/03 08:21:55 [notice] 13723#13723: OpenSSL FIPS Mode is enabled
+2020/04/03 08:21:55 [notice] 13723#13723: OpenSSL FIPS Mode is not yet enabled
+2020/04/03 08:21:55 [notice] 13723#13723: OpenSSL FIPS Mode is now enabled
 2020/04/03 08:21:55 [notice] 13723#13723: nginx/1.17.6 (nginx-plus-r20)
 2020/04/03 08:21:55 [notice] 13723#13723: built by gcc 4.8.5 20150623 (Red Hat 4.8.5-36) (GCC)
 2020/04/03 08:21:55 [notice] 13723#13723: OS: Linux 3.10.0-1062.el7.x86_64
